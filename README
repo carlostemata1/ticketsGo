@@ -1,0 +1,26 @@
+# Tickets con GO
+Queremos un API que nos permita crear, eliminar, editar y recuperar tickets con
+paginación. Que se pueda recuperar todos o filtrar por uno específico
+
+## Comenzando 🚀
+
+_cd Api
+ go mod init
+ go tidy
+ go run main.go
+
+
+### Pre-requisitos 📋
+
+tener instalado el cli de go
+
+## Construido con 🛠️
+
+_Para crear este proyecto se utilizo_
+
+goland
+
+
+## Autor ✒️
+
+* **Carlos Andres Moreno Alvarez**
