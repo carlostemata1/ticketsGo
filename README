@@ -9,6 +9,7 @@ _cd Api
  go tidy
  go get github.com/go-sql-driver/mysql
  go run main.go
+ abrir localhost:8000
 
 
 ### Pre-requisitos 📋

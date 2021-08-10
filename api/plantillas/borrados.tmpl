@@ -1,0 +1,33 @@
+{{define "borrados"}}
+{{template "cabecera"}} 
+    <a name="" id="" class="btn btn-primary" href="/crearTicket" role="button">Agregar Ticket</a>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Usuario</th>
+                <th>fecha de creacion</th>
+                <th>fecha actualizacion</th>
+                <th>abierto</th>
+                <th>ACCIONES</th>
+            </tr>
+        </thead>
+        <tbody>
+{{range.}}
+            <tr>
+                <td>{{.Id}}</td>
+                <td>{{.Usuario}}</td>
+                <td>{{.FechaCreacion}}</td>
+                <td>{{.FechaActualizacion}}</td>   
+                <td>{{.Estatus}}</td>              
+                <td>
+                    <a name="" id="" class="btn btn-warning" href="/recuperar?id={{.Id}}" role="button">Recuperar</a> 
+            </tr>
+{{end}}
+    
+        </tbody>
+    </table>
+
+{{template "pie"}}
+{{end}}
