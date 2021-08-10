@@ -1,0 +1,27 @@
+{{define "crearTicket"}}
+{{template "cabecera"}}
+<div class="card">
+    <div class="card-header">    Agrege un Ticket      </div>
+    <div class="card-body">
+        <form method = "post" action="/insertarTicket">
+          <div class="form-group">
+            <label for="">USUARIO :</label>
+            <input type="text"
+              class="form-control" name="usuario" id="usuario" aria-describedby="helpId" placeholder="digite el nombre del Medicamento">
+            <small id="helpId" class="form-text text-muted">escriba el nombre del usuario</small>
+          </div>
+          <div class="form-group">
+            <label for="">estatus:</label>
+            <input type="checkbox"
+              class="form-control" name="estatus" id="estatus" aria-describedby="helpId" placeholder="">
+            <small id="helpId" class="form-text text-muted">seleccione si esta abierto</small>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Agregar Ticket</button>
+
+        </form>
+    </div>
+</div>
+
+{{template "pie"}}
+{{end}}

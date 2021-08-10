@@ -1,0 +1,15 @@
+la base de datos no necesita ser cargada, 
+puesto que se encuentra en la nube, 
+mas especificamente en la plataforma https://remotemysql.com/
+aun asi se adjuntan los datos y un drop del sql de creacion.
+
+
+Username: XyDPZisnYJ
+
+Database name: XyDPZisnYJ
+
+Password: osKUPUaLLD
+
+Server: remotemysql.com
+
+Port: 3306

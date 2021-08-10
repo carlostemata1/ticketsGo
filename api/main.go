@@ -2,8 +2,8 @@ package main
 
 import (
 	"database/sql"
-	"net/http"
 	"fmt"
+	"net/http"
 	"text/template"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -11,10 +11,9 @@ import (
 
 func conexionBD() (conexion *sql.DB) {
 	Driver := "mysql"
-	Usuario := "xQ47YG6Gtv"
-	Contrasenia := "you9gXSOqw"
-	Nombre := "xQ47YG6Gtv"
-
+	Usuario := "XyDPZisnYJ"
+	Contrasenia := "osKUPUaLLD"
+	Nombre := "XyDPZisnYJ"
 	conexion, err := sql.Open(Driver, Usuario+":"+Contrasenia+"@tcp(remotemysql.com)/"+Nombre)
 	if err != nil {
 		panic(err.Error())
@@ -25,68 +24,74 @@ func conexionBD() (conexion *sql.DB) {
 var plantillas = template.Must(template.ParseGlob("plantillas/*"))
 
 func main() {
-	http.HandleFunc("/medicamentos", Inicio)
-	http.HandleFunc("/crearMedicamento", CrearMedicamento)
-	http.HandleFunc("/insertarMedicamento", InsertarMedicamento)
+	http.HandleFunc("/listarTickets", ListarTickets)
+	http.HandleFunc("/crearTicket", CrearTicket)
+	http.HandleFunc("/insertarTicket", InsertarTicket)
 
 	fmt.Println("servidor corriendo")
 	http.ListenAndServe(":8000", nil)
 }
 
 //---------------------------------------parte del medicamento --------------------------------------
-type Medicamento struct {
-	Id        int
-	Nombre    string
-	Precio    float64
-	Ubicacion string
+type Ticket struct {
+	Id                 int
+	Usuario            string
+	FechaCreacion      string
+	FechaActualizacion string
+	Estatus            bool
 }
 
-func Inicio(w http.ResponseWriter, r *http.Request) {
+func ListarTickets(w http.ResponseWriter, r *http.Request) {
 	conexionEstablecida := conexionBD()
-	obtenerRegistros, err := conexionEstablecida.Query("SELECT * FROM Medicamento")
+	obtenerRegistros, err := conexionEstablecida.Query("SELECT * FROM tickets")
 
 	if err != nil {
 		panic(err.Error())
 	}
-	medicamento := Medicamento{}
-	arregloMedicameto := []Medicamento{}
+	ticket := Ticket{}
+	arregloTicket := []Ticket{}
 
 	for obtenerRegistros.Next() {
 		var id int
-		var nombre string
-		var precio float64
-		var ubicacion string
-		err = obtenerRegistros.Scan(&id, &nombre, &precio, &ubicacion)
+		var usuario string
+		var fechaCreacion string
+		var fechaActualizacion string
+		var estatus bool
+		err = obtenerRegistros.Scan(&id, &usuario, &fechaCreacion, &fechaActualizacion, &estatus)
 		if err != nil {
 			panic(err.Error())
 		}
-		medicamento.Id = id
-		medicamento.Nombre = nombre
-		medicamento.Precio = precio
-		medicamento.Ubicacion = ubicacion
+		ticket.Id = id
+		ticket.Usuario = usuario
+		ticket.FechaCreacion = fechaCreacion
+		ticket.FechaActualizacion = fechaActualizacion
+		ticket.Estatus = estatus
 
-		arregloMedicameto = append(arregloMedicameto, medicamento)
+		arregloTicket = append(arregloTicket, ticket)
 	}
-	plantillas.ExecuteTemplate(w, "medicamentos", arregloMedicameto)
+	plantillas.ExecuteTemplate(w, "listarTickets", arregloTicket)
 }
 
-func CrearMedicamento(w http.ResponseWriter, r *http.Request) {
-	plantillas.ExecuteTemplate(w, "crearMedicamento", nil)
+func CrearTicket(w http.ResponseWriter, r *http.Request) {
+	plantillas.ExecuteTemplate(w, "crearTicket", nil)
 }
 
-func InsertarMedicamento(w http.ResponseWriter, r *http.Request) {
+func InsertarTicket(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
-		nombre := r.FormValue("nombre")
-		precio := r.FormValue("precio")
-		ubicacion := r.FormValue("ubicacion")
-
+		usuario := r.FormValue("usuario")
+		estatus := r.FormValue("estatus")
+		estado := 0
+		if estatus == "on" {
+			estado = 1
+		}
 		conexionEstablecida := conexionBD()
-		insertarMedicamento, err := conexionEstablecida.Prepare("INSERT INTO Medicamento (nombre, precio, ubicacion) VALUES (?, ?, ?);")
+		insertarTicket, err := conexionEstablecida.Prepare("INSERT INTO tickets (usuario, estatus) VALUES (?,?);")
 		if err != nil {
 			panic(err.Error())
 		}
-		insertarMedicamento.Exec(nombre, precio, ubicacion)
-		http.Redirect(w, r, "/medicamentos", 301)
+
+		insertarTicket.Exec(usuario, estado)
+		http.Redirect(w, r, "/listarTickets", 301)
 	}
 }
 
