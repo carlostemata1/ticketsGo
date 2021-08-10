@@ -21,7 +21,11 @@
                 <td>{{.FechaCreacion}}</td>
                 <td>{{.FechaActualizacion}}</td>   
                 <td>{{.Estatus}}</td>              
-                <td>Editar | borrar </td>
+                <td>
+                    <a name="" id="" class="btn btn-warning" href="/editar?id={{.Id}}" role="button">EDITAR</a> 
+                    | 
+                    <a name="" id="" class="btn btn-danger" href="/borrar?id={{.Id}}" role="button">BORRAR</a>
+                </td>
             </tr>
 {{end}}
     

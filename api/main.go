@@ -27,12 +27,15 @@ func main() {
 	http.HandleFunc("/listarTickets", ListarTickets)
 	http.HandleFunc("/crearTicket", CrearTicket)
 	http.HandleFunc("/insertarTicket", InsertarTicket)
+	http.HandleFunc("/borrar", Borrar)
+	http.HandleFunc("/editar", Editar)
+	http.HandleFunc("/actualizar", Actualizar)
 
 	fmt.Println("servidor corriendo")
 	http.ListenAndServe(":8000", nil)
 }
 
-//---------------------------------------parte del medicamento --------------------------------------
+//---------------------------------------parte del funciones Tickets --------------------------------------
 type Ticket struct {
 	Id                 int
 	Usuario            string
@@ -91,6 +94,91 @@ func InsertarTicket(w http.ResponseWriter, r *http.Request) {
 		}
 
 		insertarTicket.Exec(usuario, estado)
+		http.Redirect(w, r, "/listarTickets", 301)
+	}
+}
+
+func Borrar(w http.ResponseWriter, r *http.Request) {
+	idTicket := r.URL.Query().Get("id")
+	conexionEstablecida := conexionBD()
+
+	obtenerRegistro, err := conexionEstablecida.Query("SELECT * FROM tickets WHERE id=?", idTicket)
+	ticket := Ticket{}
+	for obtenerRegistro.Next() {
+		var id int
+		var usuario string
+		var fechaCreacion string
+		var fechaActualizacion string
+		var estatus bool
+		err = obtenerRegistro.Scan(&id, &usuario, &fechaCreacion, &fechaActualizacion, &estatus)
+		if err != nil {
+			panic(err.Error())
+		}
+		ticket.Id = id
+		ticket.Usuario = usuario
+		ticket.FechaCreacion = fechaCreacion
+		ticket.FechaActualizacion = fechaActualizacion
+		ticket.Estatus = estatus
+		insertarRegistro, err := conexionEstablecida.Prepare("INSERT INTO ticketBorrados (usuario, fechaCreacion, fechaActualizacion,estatus) VALUES (?,?,?,?)")
+		if err != nil {
+			panic(err.Error())
+		}
+		insertarRegistro.Exec(usuario, fechaCreacion, fechaActualizacion, estatus)
+	}
+
+	borrarTicket, err := conexionEstablecida.Prepare("DELETE FROM tickets WHERE id=?")
+	if err != nil {
+		panic(err.Error())
+	}
+
+	borrarTicket.Exec(idTicket)
+	http.Redirect(w, r, "/listarTickets", 301)
+
+}
+
+func Editar(w http.ResponseWriter, r *http.Request) {
+	idTicket := r.URL.Query().Get("id")
+	conexionEstablecida := conexionBD()
+	obtenerRegistro, err := conexionEstablecida.Query("SELECT * FROM tickets WHERE id=?", idTicket)
+	ticket := Ticket{}
+	for obtenerRegistro.Next() {
+		var id int
+		var usuario string
+		var fechaCreacion string
+		var fechaActualizacion string
+		var estatus bool
+		err = obtenerRegistro.Scan(&id, &usuario, &fechaCreacion, &fechaActualizacion, &estatus)
+		if err != nil {
+			panic(err.Error())
+		}
+		ticket.Id = id
+		ticket.Usuario = usuario
+		ticket.FechaCreacion = fechaCreacion
+		ticket.FechaActualizacion = fechaActualizacion
+		ticket.Estatus = estatus
+	}
+	fmt.Print(ticket)
+
+	plantillas.ExecuteTemplate(w, "editar", ticket)
+
+}
+
+func Actualizar(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		id := r.FormValue("id")
+		usuario := r.FormValue("usuario")
+		estatus := r.FormValue("estatus")
+		estado := 0
+		if estatus == "on" {
+			estado = 1
+		}
+		conexionEstablecida := conexionBD()
+		modificarTicket, err := conexionEstablecida.Prepare("UPDATE tickets SET usuario=?,estatus=?,fechaActualizacion=CURRENT_TIMESTAMP WHERE id=?")
+		if err != nil {
+			panic(err.Error())
+		}
+
+		modificarTicket.Exec(usuario, estado, id)
 		http.Redirect(w, r, "/listarTickets", 301)
 	}
 }

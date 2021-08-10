@@ -1,0 +1,31 @@
+{{define "editar"}}
+{{template "cabecera"}}
+<div class="card">
+    <div class="card-header">    Modifque el Ticket  {{.Id}}    </div>
+    <div class="card-body">
+        <form method = "post" action="/actualizar">
+
+            <input type="hidden" value={{.Id}} class="form-control" name="id" id="id" placeholder="">
+            
+          <div class="form-group">
+            <label for="">USUARIO :</label>
+            <input type="text"
+              class="form-control" name="usuario" value={{.Usuario}} id="usuario" aria-describedby="helpId" placeholder="digite el nombre del Medicamento">
+            <small id="helpId" class="form-text text-muted">Nombre del usuario</small>
+          </div>
+          <div class="form-group">
+            <label for="">estatus:</label>
+
+            <input type="checkbox"
+              class="form-control" name="estatus"  id="estatus" aria-describedby="helpId" placeholder="">
+            <small id="helpId" class="form-text text-muted">Estatus</small>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Modificar Ticket</button>
+
+        </form>
+    </div>
+</div>
+
+{{template "pie"}}
+{{end}}
