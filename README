@@ -7,6 +7,7 @@ paginación. Que se pueda recuperar todos o filtrar por uno específico
 _cd Api
  go mod init
  go tidy
+ go get github.com/go-sql-driver/mysql
  go run main.go
 
 

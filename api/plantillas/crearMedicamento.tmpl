@@ -1,0 +1,33 @@
+{{define "crearMedicamento"}}
+{{template "cabecera"}}
+<div class="card">
+    <div class="card-header">    Medicamentos      </div>
+    <div class="card-body">
+        <form method = "post" action="/insertarMedicamento">
+          <div class="form-group">
+            <label for="">NOMBRE :</label>
+            <input type="text"
+              class="form-control" name="nombre" id="nombre" aria-describedby="helpId" placeholder="digite el nombre del Medicamento">
+            <small id="helpId" class="form-text text-muted">escriba el nombre del medicamento</small>
+          </div>
+          <div class="form-group">
+            <label for="">PRECIO:</label>
+            <input type="double"
+              class="form-control" name="precio" id="precio" aria-describedby="helpId" placeholder="digite el precio del Medicamento">
+            <small id="helpId" class="form-text text-muted">escriba el precio del medicamento</small>
+          </div>
+          <div class="form-group">
+            <label for="">UBICACION :</label>
+            <input type="text"
+              class="form-control" name="ubicacion" id="ubicacion" aria-describedby="helpId" placeholder="digite la ubicacion del Medicamento">
+            <small id="helpId" class="form-text text-muted">escriba la ubicacion del medicamento</small>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Agregar Medicamento</button>
+
+        </form>
+    </div>
+</div>
+
+{{template "pie"}}
+{{end}}
