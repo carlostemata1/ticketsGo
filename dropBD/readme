@@ -13,3 +13,5 @@ Password: osKUPUaLLD
 Server: remotemysql.com
 
 Port: 3306
+
+## esto Ya no por que remotemysql se cae con muchas query

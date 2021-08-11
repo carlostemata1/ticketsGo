@@ -9,18 +9,20 @@ _cd Api
  go tidy
  go get github.com/go-sql-driver/mysql
  go run main.go
- abrir localhost:8000
+ abrir localhost:8000/listarTickets
 
 
 ### Pre-requisitos 📋
 
 tener instalado el cli de go
+montar una bd en local con el drop de la carpeta dropBD
 
 ## Construido con 🛠️
 
 _Para crear este proyecto se utilizo_
 
 goland
+xampp
 
 
 ## Autor ✒️

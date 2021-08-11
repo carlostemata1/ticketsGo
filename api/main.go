@@ -11,10 +11,10 @@ import (
 
 func conexionBD() (conexion *sql.DB) {
 	Driver := "mysql"
-	Usuario := "XyDPZisnYJ"
-	Contrasenia := "osKUPUaLLD"
-	Nombre := "XyDPZisnYJ"
-	conexion, err := sql.Open(Driver, Usuario+":"+Contrasenia+"@tcp(remotemysql.com)/"+Nombre)
+	Usuario := "root"
+	Contrasenia := ""
+	Nombre := "basedatosprueba"
+	conexion, err := sql.Open(Driver, Usuario+":"+Contrasenia+"@tcp(127.0.0.1)/"+Nombre)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -24,13 +24,12 @@ func conexionBD() (conexion *sql.DB) {
 var plantillas = template.Must(template.ParseGlob("plantillas/*"))
 
 func main() {
-	http.HandleFunc("/", ListarTickets)
+	http.HandleFunc("/eliminar", Eliminar)
 	http.HandleFunc("/listarTickets", ListarTickets)
 	http.HandleFunc("/borrados", Borrados)
 	http.HandleFunc("/recuperar", Recuperar)
 	http.HandleFunc("/crearTicket", CrearTicket)
 	http.HandleFunc("/insertarTicket", InsertarTicket)
-	http.HandleFunc("/borrar", Borrar)
 	http.HandleFunc("/editar", Editar)
 	http.HandleFunc("/actualizar", Actualizar)
 
@@ -95,17 +94,19 @@ func InsertarTicket(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(err.Error())
 		}
-
 		insertarTicket.Exec(usuario, estado)
 		http.Redirect(w, r, "/listarTickets", 301)
 	}
 }
 
-func Borrar(w http.ResponseWriter, r *http.Request) {
+func Eliminar(w http.ResponseWriter, r *http.Request) {
 	idTicket := r.URL.Query().Get("id")
 	conexionEstablecida := conexionBD()
 
 	obtenerRegistro, err := conexionEstablecida.Query("SELECT * FROM tickets WHERE id=?", idTicket)
+	if err != nil {
+		panic(err.Error())
+	}
 	ticket := Ticket{}
 	for obtenerRegistro.Next() {
 		var id int
@@ -122,7 +123,7 @@ func Borrar(w http.ResponseWriter, r *http.Request) {
 		ticket.FechaCreacion = fechaCreacion
 		ticket.FechaActualizacion = fechaActualizacion
 		ticket.Estatus = estatus
-		insertarRegistro, err := conexionEstablecida.Prepare("INSERT INTO ticketBorrados (usuario, fechaCreacion, fechaActualizacion,estatus) VALUES (?,?,?,?)")
+		insertarRegistro, err := conexionEstablecida.Prepare("INSERT INTO ticketborrados (usuario, fechaCreacion, fechaActualizacion,estatus) VALUES (?,?,?,?)")
 		if err != nil {
 			panic(err.Error())
 		}
@@ -133,7 +134,6 @@ func Borrar(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err.Error())
 	}
-
 	borrarTicket.Exec(idTicket)
 	http.Redirect(w, r, "/listarTickets", 301)
 
@@ -187,7 +187,7 @@ func Actualizar(w http.ResponseWriter, r *http.Request) {
 
 func Borrados(w http.ResponseWriter, r *http.Request) {
 	conexionEstablecida := conexionBD()
-	obtenerRegistros, err := conexionEstablecida.Query("SELECT * FROM ticketBorrados")
+	obtenerRegistros, err := conexionEstablecida.Query("SELECT * FROM ticketborrados")
 
 	if err != nil {
 		panic(err.Error())
@@ -220,7 +220,7 @@ func Recuperar(w http.ResponseWriter, r *http.Request) {
 	idTicket := r.URL.Query().Get("id")
 	conexionEstablecida := conexionBD()
 
-	obtenerRegistro, err := conexionEstablecida.Query("SELECT * FROM ticketBorrados WHERE id=?", idTicket)
+	obtenerRegistro, err := conexionEstablecida.Query("SELECT * FROM ticketborrados WHERE id=?", idTicket)
 	ticket := Ticket{}
 	for obtenerRegistro.Next() {
 		var id int
@@ -244,12 +244,11 @@ func Recuperar(w http.ResponseWriter, r *http.Request) {
 		insertarRegistro.Exec(usuario, fechaCreacion, fechaActualizacion, estatus)
 	}
 
-	borrarTicket, err := conexionEstablecida.Prepare("DELETE FROM ticketBorrados WHERE id=?")
+	borrarTicket, err := conexionEstablecida.Prepare("DELETE FROM ticketborrados WHERE id=?")
 	if err != nil {
 		panic(err.Error())
 	}
 
 	borrarTicket.Exec(idTicket)
 	http.Redirect(w, r, "/borrados", 301)
-
 }
